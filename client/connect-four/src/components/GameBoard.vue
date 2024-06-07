@@ -4,14 +4,64 @@
         <h4>Two Player</h4>
     </div>
 
+
     <div class="board">
-        <section class="square" id="squareone">1</section>
-        <section class="square" id="square2">2</section>
-        <section class="square" id="square3">3</section>
-        <section class="square" id="square4">4</section>
-        <section class="square" id="square5">5</section>
-        <section class="square" id="square6">6</section>
-        <section class="square" id="square7">7</section>
+        <section class="column">
+            <section class="row" id="a1">1</section>
+            <section class="row" id="a2">2</section>
+            <section class="row" id="a3">3</section>
+            <section class="row" id="a4">4</section>
+            <section class="row" id="a5">5</section>
+            <section class="row" id="a6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="b1">1</section>
+            <section class="row" id="b2">2</section>
+            <section class="row" id="b3">3</section>
+            <section class="row" id="b4">4</section>
+            <section class="row" id="b5">5</section>
+            <section class="row" id="b6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="c1">1</section>
+            <section class="row" id="c2">2</section>
+            <section class="row" id="c3">3</section>
+            <section class="row" id="c4">4</section>
+            <section class="row" id="c5">5</section>
+            <section class="row" id="c6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="d1">1</section>
+            <section class="row" id="d2">2</section>
+            <section class="row" id="d3">3</section>
+            <section class="row" id="d4">4</section>
+            <section class="row" id="d5">5</section>
+            <section class="row" id="d6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="e1">1</section>
+            <section class="row" id="e2">2</section>
+            <section class="row" id="e3">3</section>
+            <section class="row" id="e4">4</section>
+            <section class="row" id="e5">5</section>
+            <section class="row" id="e6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="f1">1</section>
+            <section class="row" id="f2">2</section>
+            <section class="row" id="f3">3</section>
+            <section class="row" id="f4">4</section>
+            <section class="row" id="f5">5</section>
+            <section class="row" id="f6">6</section>
+        </section>
+        <section class="column">
+            <section class="row" id="g1">1</section>
+            <section class="row" id="g2">2</section>
+            <section class="row" id="g3">3</section>
+            <section class="row" id="g4">4</section>
+            <section class="row" id="g5">5</section>
+            <section class="row" id="g6">6</section>
+        </section>
 
     </div>
 
@@ -24,20 +74,47 @@
 <style>
 
 .board {
-    display: grid;
+    display: flex;
+
+    flex-direction: row;
    
     height: 600px;
     width: 700px;
 
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-
-    gap: 5px;
+   
     border: 2px solid black;
 
     background-color: yellow;
+}
 
-   
+#b2 {
+    background-color: red;
+}
+
+#a5 {
+    background-color: red;
+}
+
+.column {
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100%;
+    width: 100px;
+    border: 1px solid black;
+
+    justify-content: space-evenly;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100px;
+    border: 1px solid black;
+
+    justify-content: space-evenly;
 }
 
 .square {
