@@ -1,11 +1,12 @@
 <template>
     <div class="header">
         <h3>Connect Four</h3>
-        <h4>Two Player</h4>
+        <h4  v-bind:style="{ color: currentPlayer === 'red' ? 'red' : 'yellow' }">It's {{ currentPlayer }}'s turn!</h4>
     </div>
 
 
     <div class="board">
+        <!-- This creates the elements in the board by section -->
         <section class="column" v-on:click="playChip">
             <section class="row" id="a1">1</section>
             <section class="row" id="a2">2</section>
@@ -73,23 +74,30 @@ export default {
 
     data() {
         return {
-            currentPlayer: "red",
+            currentPlayer: "red", // red goes first
         }
     },
 
     methods: {
 
-        playChip(event) {
+        playChip(event) // function to play a chip
+        {
 
-            const elementId = event.target;
-            
-            if(!elementId.classList.contains("red") && !elementId.classList.contains("yellow")){
-                elementId.classList.add(this.currentPlayer);
-                this.currentPlayer = this.currentPlayer === "red" ? "yellow" : "red";
+            const elementId = event.target; // get the element that was clicked
+
+            if (!elementId.classList.contains("red") && !elementId.classList.contains("yellow")) // if the element does not have a color, cannot overwrite other play's chip
+            {
+                elementId.classList.add(this.currentPlayer); // add the current player's color to the element
+                this.currentPlayer = this.currentPlayer === "red" ? "yellow" : "red"; // switch players
             }
 
+            //need to create a function to check for win conditions
+            //need to create a function to check for a tie
+            //need to create a function to reset the board
+            //need to fix an issue where column is changing color on click, this is also counting as a player's turn
 
-        }
+
+        },
 
     }
 
@@ -99,22 +107,24 @@ export default {
 </script>
 
 <style>
-
+/* Style for the board */
 .board {
     display: flex;
 
     flex-direction: row;
-   
+
     height: fit-content;
     width: fit-content;
-   
+
     border: 1px solid black;
 
     background-color: blue;
+
+
 }
 
 
-
+/* Style for each of the columns on the board */
 .column {
     display: flex;
 
@@ -126,9 +136,10 @@ export default {
     justify-content: space-evenly;
 
     margin: 15px;
-        
+
 }
 
+/* Style for each of the rows on the board, with access to each piece in that row */
 .row {
     display: flex;
     flex-direction: row;
@@ -138,17 +149,19 @@ export default {
 
     justify-content: space-evenly;
 
-    border-radius:50%;
+    border-radius: 50%;
 
     margin: 15px;
 
     background-color: white;
 }
 
+/* Style for red player */
 .red {
     background-color: red;
 }
 
+/* Style for yellow player */
 .yellow {
     background-color: yellow;
 }
@@ -157,6 +170,7 @@ export default {
     background-color: blue;
 }
 
+/* Style for pieces to be circles and in grid area */
 .square {
     grid-area: square;
     height: 100px;
@@ -164,5 +178,13 @@ export default {
     border: solid 1px black;
 }
 
+h3 {
+    text-align: center;
+    font-size: 2em;
+}
 
+h4 {
+    text-align: center;
+    font-size: 1.5em;
+}
 </style>
