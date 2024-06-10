@@ -22,7 +22,7 @@
             <section class="row" id="b5">5</section>
             <section class="row" id="b6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="c1">1</section>
             <section class="row" id="c2">2</section>
             <section class="row" id="c3">3</section>
@@ -30,7 +30,7 @@
             <section class="row" id="c5">5</section>
             <section class="row" id="c6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="d1">1</section>
             <section class="row" id="d2">2</section>
             <section class="row" id="d3">3</section>
@@ -38,7 +38,7 @@
             <section class="row" id="d5">5</section>
             <section class="row" id="d6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="e1">1</section>
             <section class="row" id="e2">2</section>
             <section class="row" id="e3">3</section>
@@ -46,7 +46,7 @@
             <section class="row" id="e5">5</section>
             <section class="row" id="e6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="f1">1</section>
             <section class="row" id="f2">2</section>
             <section class="row" id="f3">3</section>
@@ -54,7 +54,7 @@
             <section class="row" id="f5">5</section>
             <section class="row" id="f6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="g1">1</section>
             <section class="row" id="g2">2</section>
             <section class="row" id="g3">3</section>
@@ -71,15 +71,23 @@
 
 export default {
 
+    data() {
+        return {
+            currentPlayer: "red",
+        }
+    },
+
     methods: {
 
-        playChip() {
+        playChip(event) {
 
-            alert("Click registered");
-
-            if(!this.event.classlist.contains("red") && !this.event.classlist.contains("yellow")){
-                this.event.classlist.add("");
+            const elementId = event.target;
+            
+            if(!elementId.classList.contains("red") && !elementId.classList.contains("yellow")){
+                elementId.classList.add(this.currentPlayer);
+                this.currentPlayer = this.currentPlayer === "red" ? "yellow" : "red";
             }
+
 
         }
 
@@ -105,13 +113,7 @@ export default {
     background-color: blue;
 }
 
-#a6 {
-    background-color: red;
-}
 
-#a5 {
-    background-color: yellow;
-}
 
 .column {
     display: flex;
@@ -141,6 +143,18 @@ export default {
     margin: 15px;
 
     background-color: white;
+}
+
+.red {
+    background-color: red;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.blue {
+    background-color: blue;
 }
 
 .square {
