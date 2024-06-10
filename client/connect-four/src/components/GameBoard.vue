@@ -6,7 +6,7 @@
 
 
     <div class="board">
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="a1">1</section>
             <section class="row" id="a2">2</section>
             <section class="row" id="a3">3</section>
@@ -14,7 +14,7 @@
             <section class="row" id="a5">5</section>
             <section class="row" id="a6">6</section>
         </section>
-        <section class="column">
+        <section class="column" v-on:click="playChip">
             <section class="row" id="b1">1</section>
             <section class="row" id="b2">2</section>
             <section class="row" id="b3">3</section>
@@ -69,6 +69,25 @@
 
 <script>
 
+export default {
+
+    methods: {
+
+        playChip() {
+
+            alert("Click registered");
+
+            if(!this.event.classlist.contains("red") && !this.event.classlist.contains("yellow")){
+                this.event.classlist.add("");
+            }
+
+        }
+
+    }
+
+}
+
+
 </script>
 
 <style>
@@ -78,13 +97,12 @@
 
     flex-direction: row;
    
-    height: 600px;
-    width: 700px;
-
+    height: fit-content;
+    width: fit-content;
    
-    border: 1px solid white;
+    border: 1px solid black;
 
-    background-color: black;
+    background-color: blue;
 }
 
 #a6 {
@@ -101,25 +119,28 @@
     flex-direction: column;
 
     height: 100%;
-    width: 100px;
-    border: 1px solid black;
+    width: 100%;
 
     justify-content: space-evenly;
 
-    border: 1px solid white;
-    
+    margin: 15px;
+        
 }
 
 .row {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    height: 100px;
     width: 100px;
-    border: 1px solid white;
+    border: 5px solid;
 
     justify-content: space-evenly;
 
     border-radius:50%;
+
+    margin: 15px;
+
+    background-color: white;
 }
 
 .square {
@@ -128,5 +149,6 @@
     width: 100px;
     border: solid 1px black;
 }
+
 
 </style>
