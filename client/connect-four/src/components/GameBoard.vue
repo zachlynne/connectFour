@@ -82,17 +82,17 @@
     width: 700px;
 
    
-    border: 2px solid black;
+    border: 1px solid white;
 
-    background-color: yellow;
+    background-color: black;
 }
 
-#b2 {
+#a6 {
     background-color: red;
 }
 
 #a5 {
-    background-color: red;
+    background-color: yellow;
 }
 
 .column {
@@ -105,6 +105,9 @@
     border: 1px solid black;
 
     justify-content: space-evenly;
+
+    border: 1px solid white;
+    
 }
 
 .row {
@@ -112,9 +115,11 @@
     flex-direction: row;
     height: 100%;
     width: 100px;
-    border: 1px solid black;
+    border: 1px solid white;
 
     justify-content: space-evenly;
+
+    border-radius:50%;
 }
 
 .square {
