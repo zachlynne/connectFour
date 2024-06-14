@@ -90,27 +90,32 @@ export default {
         playChip(event) // function to play a chip
         {
 
-            const cell = event.target; // get the element that was clicked
+            let cell = event.target; // get the element that was clicked
             this.elementId = cell.id.split("");
 
-            //row = elementId[1]
             //column = elementId[0]
+            //row = elementId[1]
+            
 
-
-            if (!this.gameOver && !cell.classList.contains("red") && !cell.classList.contains("yellow") && cell.classList.contains("row")) // if the element does not have a color, cannot overwrite other play's chip
+            // if the game is not over and the player has clicked on an appropriate space on the board
+            if (!this.gameOver && cell.classList.contains("row"))             
             {
-                cell.classList.add(this.currentPlayer); // add the current player's color to the element
-                this.checkWinCon(); // check for win conditions
-                this.currentPlayer = this.currentPlayer === "red" ? "yellow" : "red"; // switch players
-                
+                //determine if there are already pieces played in the column and place new piece in the first unoccupied space
+                for(let i = this.rowPosition.length - 1; i >= 0; i--){
+
+                    cell = document.getElementById(this.elementId[0] + this.rowPosition[i]);    //reassign cell to first avail
+                    this.elementId = cell.id.split(""); //pull column info from newly assigned cell
+
+                    //check to see if any pieces were played
+                    if(!cell.classList.contains("red") && !cell.classList.contains("yellow")) {
+
+                        cell.classList.add(this.currentPlayer); // add the current player's color to the element
+                        this.checkWinCon(); // check for win conditions
+                        this.currentPlayer = this.currentPlayer === "red" ? "yellow" : "red"; // switch players
+                        break;
+                    }
+                }
             }
-
-            //need to create a function to check for win conditions
-            //need to create a function to check for a tie
-            //need to create a function to reset the board
-            //need to fix an issue where column is changing color on click, this is also counting as a player's turn
-
-
         },
         //check for win conditions
         checkWinCon() {
