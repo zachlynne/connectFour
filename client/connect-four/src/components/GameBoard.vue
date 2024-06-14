@@ -167,7 +167,7 @@ export default {
             }    
 
             //check for diagonal win (positive slope) - rows decrease, columns increase
-            for (let i = this.rowPosition.length; i > 3; i--) {
+            for (let i = this.rowPosition.length - 1; i > 3; i--) {
                 for(let j = 0; j < this.columnPosition.length - 3; j++) {
                     
                     if (
