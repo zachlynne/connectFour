@@ -1,4 +1,7 @@
 <script setup>
+import { RouterLink } from 'vue-router';
+
+RouterLink
 </script>
 
 <template>
@@ -9,12 +12,16 @@
   <main>
     <div>
       <nav>
-            <router-link to="/" exact>Home</router-link>
-            <router-link to="checkers">Checkers</router-link>
-            <router-link to="connect-four">Connect Four</router-link>
+            <router-link v-bind:to="{ name: 'home'}" exact>Home</router-link>
+            <router-link v-bind:to="{ name: 'checkers'}">Checkers</router-link>
+            <router-link v-bind:to="{ name: 'connect-four'}">Connect Four</router-link>
         </nav>
+        <router-view></router-view>
     </div>
+    
   </main>
+
+  
 
 </template>
 

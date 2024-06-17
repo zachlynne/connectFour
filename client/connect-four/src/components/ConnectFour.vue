@@ -190,9 +190,6 @@ export default {
                 this.winner = "Everyone";
             }
 
-
-
-
         } // end check win condition
     } // end methods
 } // end export / default
@@ -200,7 +197,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 /* Style for the board */
 .board {
     display: flex;
@@ -265,12 +262,6 @@ export default {
 }
 
 /* Style for pieces to be circles and in grid area */
-.square {
-    grid-area: square;
-    height: 100px;
-    width: 100px;
-    border: solid 1px black;
-}
 
 h3 {
     text-align: center;
