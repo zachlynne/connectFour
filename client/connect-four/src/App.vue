@@ -1,5 +1,4 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
@@ -9,12 +8,14 @@ import { RouterLink, RouterView } from 'vue-router'
 
   <main>
     <div>
-   
+      <nav>
+            <router-link to="/" exact>Home</router-link>
+            <router-link to="checkers">Checkers</router-link>
+            <router-link to="connect-four">Connect Four</router-link>
+        </nav>
     </div>
   </main>
 
-
-  <RouterView />
 </template>
 
 <style scoped>
