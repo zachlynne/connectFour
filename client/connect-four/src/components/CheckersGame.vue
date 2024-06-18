@@ -102,6 +102,11 @@ export default {
             moveCounter: 0,
             possibleMovesCheck: false,
             possibleMoves: null,
+            pieceMoving: null,
+
+            // redPiece: { element: null },     // setting up for use of objects
+            // whitePiece: { element: null }    // setting up for use of objects
+
         }
     },
     methods: {
@@ -112,30 +117,57 @@ export default {
                 this.movePiece(event);
             }
         },
-        checkPossibleMoves(event) {
-            // check if there are any possible moves
-            let element = event.target;
-            let id = element.id;
-            let row = id.charAt(1);
-            let column = id.charAt(0);
+        checkPossibleMoves(event) {  // check if there are any possible moves
             
-                let possibleMoves = [
-                this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
-                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
-            ];
-                    let possibleMove = document.getElementById(possibleMoves[0]);
-                    if (possibleMove) {
-                        possibleMove.classList.add("possibleMove");
-                       
+            let element = event.target;
+
+            if(element.classList.contains("row")) {
+    
+                let row = element.id.charAt(1);
+                let column = element.id.charAt(0);   
+                
+                this.possibleMoves = null;
+
+                if(this.currentPlayer === "red") {
+
+                    if(element.classList.contains("red")) {
+
+                    this.possibleMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
+                ];
                     }
-                    possibleMove = document.getElementById(possibleMoves[1]);
-                    if (possibleMove) {
+
+                } else if(this.currentPlayer === "white") {
+
+                    if(element.classList.contains("white")) {
+
+                    this.possibleMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
+                ];
+                    }
+                }
+
+                if(this.possibleMoves) {
+
+                    let possibleMove = document.getElementById(this.possibleMoves[0]);
+                    if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
+                        possibleMove.classList.add("possibleMove");
+                    
+                    }
+                    possibleMove = document.getElementById(this.possibleMoves[1]);
+                    if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
                         possibleMove.classList.add("possibleMove");
                     }
-                    element.classList.remove(this.currentPlayer);
+                    this.pieceMoving = element;
                     this.possibleMoves = document.getElementsByClassName("possibleMove");
                     
                 this.possibleMovesCheck = true;
+                
+                }
+        
+            }
             // if not, game is over
             // if game is over, display winner
         },
@@ -143,19 +175,30 @@ export default {
             // if (this.gameOver) {
             //     return;
             // }
+
             let element = event.target;
-            let id = element.id;
+
+            if(element === this.pieceMoving) {
+                for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
+                        this.possibleMoves[i].classList.remove("possibleMove");
+                    }
+                this.possibleMovesCheck = false;
+                return;
+            }
+
+            if(element.classList.contains("row") && element.classList.contains("odd") && element.classList.contains("possibleMove")) {
                    
                     element.classList.add(this.currentPlayer);
+                    this.pieceMoving.classList.remove(this.currentPlayer);
                     this.moveCounter++;
                     this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
                     
-                    
-                    for (let i = 0; i < this.possibleMoves.length; i++) {
+
+                    for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                         this.possibleMoves[i].classList.remove("possibleMove");
                     }
                     this.possibleMovesCheck = false;
-
+            }
         }
     }
 }
@@ -197,7 +240,6 @@ export default {
     flex-direction: row;
     height: 100px;
     width: 100px;
-    border: 5px solid;
 
     justify-content: space-evenly;
 }
