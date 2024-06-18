@@ -94,6 +94,7 @@ export default {
     data() {
         return {
             currentPlayer: "red", // red goes first
+            otherPlayer: "white", // white goes second
             rowPosition: ["1", "2", "3", "4", "5", "6", "7", "8"],
             columnPosition: ["a", "b", "c", "d", "e", "f", "g", "h"],
             gameOver: false,
@@ -102,6 +103,8 @@ export default {
             moveCounter: 0,
             possibleMovesCheck: false,
             possibleMoves: null,
+            jumpMoves: null,
+            possibleCaptures: new Map(),
             pieceMoving: null,
 
             // redPiece: { element: null },     // setting up for use of objects
@@ -122,7 +125,7 @@ export default {
             let element = event.target;
 
             if(element.classList.contains("row")) {
-    
+                // Get row and column of clicked element
                 let row = element.id.charAt(1);
                 let column = element.id.charAt(0);   
                 
@@ -131,10 +134,15 @@ export default {
                 if(this.currentPlayer === "red") {
 
                     if(element.classList.contains("red")) {
-
+                // Add possible moves for non-jumping pieces
                     this.possibleMoves = [
                     this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
                     this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
+                ];
+                // Add possible moves for jumping pieces
+                    this.jumpMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
                 ];
                     }
 
@@ -142,25 +150,44 @@ export default {
 
                     if(element.classList.contains("white")) {
 
+                // Add possible moves for non-jumping pieces
                     this.possibleMoves = [
                     this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
                     this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
+                ];
+                // Add possible moves for jumping pieces
+                    this.jumpMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
                 ];
                     }
                 }
 
                 if(this.possibleMoves) {
-
+                    // Check if possible moves are valid
                     let possibleMove = document.getElementById(this.possibleMoves[0]);
+                    let jumpMove = document.getElementById(this.jumpMoves[0]);
                     if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
                         possibleMove.classList.add("possibleMove");
-                    
+                        // Add possible moves for jumping pieces
+                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
+                        jumpMove.classList.add("possibleMove");
+                        // Add possible captures to map
+                        this.possibleCaptures.set(jumpMove, possibleMove);
                     }
                     possibleMove = document.getElementById(this.possibleMoves[1]);
+                    jumpMove = document.getElementById(this.jumpMoves[1]);
                     if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
                         possibleMove.classList.add("possibleMove");
+                        // Add possible moves for jumping pieces
+                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
+                        jumpMove.classList.add("possibleMove");
+                        // Add possible captures to map
+                        this.possibleCaptures.set(jumpMove, possibleMove);
                     }
+                    // Set pieceMoving equal to the current piece being targetted to move
                     this.pieceMoving = element;
+                    // Populate possibleMoves array with elements that contain the class "possibleMove"
                     this.possibleMoves = document.getElementsByClassName("possibleMove");
                     
                 this.possibleMovesCheck = true;
@@ -178,6 +205,7 @@ export default {
 
             let element = event.target;
 
+            // Reset possible moves if piece is clicked again
             if(element === this.pieceMoving) {
                 for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                         this.possibleMoves[i].classList.remove("possibleMove");
@@ -186,14 +214,27 @@ export default {
                 return;
             }
 
+            // Capture Jumped Piece
+            if(this.possibleCaptures.has(element)) {
+                let possibleMove = this.possibleCaptures.get(element);
+                possibleMove.classList.remove(this.otherPlayer);
+                this.possibleCaptures.delete(element);
+            }
+
+            // Move Piece
             if(element.classList.contains("row") && element.classList.contains("odd") && element.classList.contains("possibleMove")) {
-                   
+                    
+                    // Add piece to new location
                     element.classList.add(this.currentPlayer);
+                    // Remove piece from old location
                     this.pieceMoving.classList.remove(this.currentPlayer);
+                    // Increment move counter
                     this.moveCounter++;
+                    // Switch players
+                    this.otherPlayer = this.currentPlayer;
                     this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
                     
-
+                    // Reset possible moves
                     for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                         this.possibleMoves[i].classList.remove("possibleMove");
                     }
