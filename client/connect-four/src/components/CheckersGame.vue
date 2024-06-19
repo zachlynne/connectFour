@@ -1,6 +1,7 @@
 <template>
     <header>
         <h1>Checkers</h1>
+        <!-- make statements for whose turn it is and winner / tie -->
     </header>
     <main>
         <div class="board">
@@ -101,7 +102,7 @@ export default {
             winner: "",
             elementId: null,
             moveCounter: 0,
-            possibleMovesCheck: false,
+            possibleMovesOnBoard: false,
             possibleMoves: null,
             jumpMoves: null,
             possibleCaptures: new Map(),
@@ -114,7 +115,7 @@ export default {
     },
     methods: {
         handleClick() {
-            if(this.possibleMovesCheck === false) {
+            if(this.possibleMovesOnBoard === false) { //possibleMovesOnBoard
                 this.checkPossibleMoves(event);
             } else {
                 this.movePiece(event);
@@ -122,18 +123,18 @@ export default {
         },
         checkPossibleMoves(event) {  // check if there are any possible moves
             
-            let element = event.target;
+            let element = event.target; // get the element that was clicked
 
-            if(element.classList.contains("row")) {
+            if(element.classList.contains("row")) { // if the element is a row
                 // Get row and column of clicked element
                 let row = element.id.charAt(1);
                 let column = element.id.charAt(0);   
                 
                 this.possibleMoves = null;
 
-                if(this.currentPlayer === "red") {
+                if(this.currentPlayer === "red") { // if it is red's turn
 
-                    if(element.classList.contains("red")) {
+                    if(element.classList.contains("red")) { // if the element is red
                 // Add possible moves for non-jumping pieces
                     this.possibleMoves = [
                     this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
@@ -170,7 +171,7 @@ export default {
                     if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
                         possibleMove.classList.add("possibleMove");
                         // Add possible moves for jumping pieces
-                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
+                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){ 
                         jumpMove.classList.add("possibleMove");
                         // Add possible captures to map
                         this.possibleCaptures.set(jumpMove, possibleMove);
@@ -185,12 +186,12 @@ export default {
                         // Add possible captures to map
                         this.possibleCaptures.set(jumpMove, possibleMove);
                     }
-                    // Set pieceMoving equal to the current piece being targetted to move
+                    // Set pieceMoving equal to the current piece being targeted to move
                     this.pieceMoving = element;
                     // Populate possibleMoves array with elements that contain the class "possibleMove"
                     this.possibleMoves = document.getElementsByClassName("possibleMove");
                     
-                this.possibleMovesCheck = true;
+                this.possibleMovesOnBoard = true;
                 
                 }
         
@@ -210,7 +211,7 @@ export default {
                 for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                         this.possibleMoves[i].classList.remove("possibleMove");
                     }
-                this.possibleMovesCheck = false;
+                this.possibleMovesOnBoard = false;
                 return;
             }
 
@@ -218,7 +219,7 @@ export default {
             if(this.possibleCaptures.has(element)) {
                 let possibleMove = this.possibleCaptures.get(element);
                 possibleMove.classList.remove(this.otherPlayer);
-                this.possibleCaptures.delete(element);
+                this.possibleCaptures = new Map();
             }
 
             // Move Piece
@@ -238,7 +239,7 @@ export default {
                     for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                         this.possibleMoves[i].classList.remove("possibleMove");
                     }
-                    this.possibleMovesCheck = false;
+                    this.possibleMovesOnBoard = false;
             }
         }
     }
