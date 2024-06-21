@@ -116,105 +116,65 @@ export default {
     },
     methods: {
         handleClick() {
-            if(this.pieceCaptured){
-                this.checkPossibleMoves(event);
-                this.doubleJump(event);
-            }
-            else if(this.possibleMovesOnBoard === false) { //possibleMovesOnBoard
-                this.checkPossibleMoves(event);
-            } else {
-                this.movePiece(event);
+            // Only allows clicks on odd squares
+            if (event.target.classList.contains("odd")) {
+
+                if (this.possibleCaptures.size > 0 && this.pieceCaptured === true) {
+                    this.doubleJump(event);
+                }
+                else if (this.possibleMovesOnBoard === false) { //possibleMovesOnBoard
+                    this.checkPossibleMoves(event);
+                } else {
+                    this.movePiece(event);
+                }
             }
         },
 
         checkPossibleMoves(event) {  // check if there are any possible moves
-            
+
             let element = event.target; // get the element that was clicked
 
-            if(element.classList.contains("row")) { // if the element is a row
-                // Get row and column of clicked element
-                let row = element.id.charAt(1);
-                let column = element.id.charAt(0);   
-                
-                this.possibleMoves = null;
+            // Get row and column of clicked element
+            let row = element.id.charAt(1);
+            let column = element.id.charAt(0);
 
-                if(this.currentPlayer === "red") { // if it is red's turn
+            this.possibleMoves = null;
 
-                    if(element.classList.contains("red")) { // if the element is red
-                // Add possible moves for non-jumping pieces
-                    this.possibleMoves = [
-                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
-                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
-                ];
-                // Add possible moves for jumping pieces
-                    this.jumpMoves = [
-                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
-                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
-                ];
-                    }
+            if (this.currentPlayer === "red") { // if it is red's turn
 
-                } else if(this.currentPlayer === "white") {
-
-                    if(element.classList.contains("white")) {
-
-                // Add possible moves for non-jumping pieces
-                    this.possibleMoves = [
-                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
-                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
-                ];
-                // Add possible moves for jumping pieces
-                    this.jumpMoves = [
-                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
-                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
-                ];
-                    }
+                if (element.classList.contains("red")) { // if the element is red
+                    // Add possible moves for non-jumping pieces
+                    this.checkRedMoves(element);
                 }
 
-                if(this.possibleMoves) {
-                    // Check if possible moves are valid
-                    let possibleMove = document.getElementById(this.possibleMoves[0]);
-                    let jumpMove = document.getElementById(this.jumpMoves[0]);
-                    if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
-                        possibleMove.classList.add("possibleMove");
-                        // Add possible moves for jumping pieces
-                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){ 
-                        jumpMove.classList.add("possibleMove");
-                        // Add possible captures to map
-                        this.possibleCaptures.set(jumpMove, possibleMove);
-                    }
-                    possibleMove = document.getElementById(this.possibleMoves[1]);
-                    jumpMove = document.getElementById(this.jumpMoves[1]);
-                    if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
-                        possibleMove.classList.add("possibleMove");
-                        // Add possible moves for jumping pieces
-                    } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
-                        jumpMove.classList.add("possibleMove");
-                        // Add possible captures to map
-                        this.possibleCaptures.set(jumpMove, possibleMove);
-                    }
-                    // Set pieceMoving equal to the current piece being targeted to move
-                    this.pieceMoving = element;
-                    // Populate possibleMoves array with elements that contain the class "possibleMove"
-                    this.possibleMoves = document.getElementsByClassName("possibleMove");
-                    
-                this.possibleMovesOnBoard = true;
-                
+            } else if (this.currentPlayer === "white") {
+
+                if (element.classList.contains("white")) {
+
+                    this.checkWhiteMoves(element);
                 }
-        
             }
-            // if not, game is over
-            // if game is over, display winner
+
+            if (this.possibleMoves) {
+                // Check if possible moves are valid
+                this.displayAllPossibleMoves();
+                // Set pieceMoving equal to the current piece being targeted to move
+                this.pieceMoving = element;
+                // Populate possibleMoves array with elements that contain the class "possibleMove"
+                this.possibleMoves = document.getElementsByClassName("possibleMove");
+
+                this.possibleMovesOnBoard = true;
+
+            }
+
+
         },
 
         movePiece(event) {
-            // if (this.gameOver) {
-            //     return;
-            // }
-
             let element = event.target;
 
             // Reset possible moves if piece is clicked again
-            if(element === this.pieceMoving) {
+            if (element === this.pieceMoving) {
                 for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
                     this.possibleMoves[i].classList.remove("possibleMove");
                 }
@@ -223,7 +183,7 @@ export default {
             }
 
             // Capture Jumped Piece
-            if(this.possibleCaptures.has(element)) {
+            if (this.possibleCaptures.has(element)) {
                 let possibleMove = this.possibleCaptures.get(element);
                 possibleMove.classList.remove(this.otherPlayer);
                 this.possibleCaptures = new Map();
@@ -231,8 +191,8 @@ export default {
             }
 
             // Move Piece
-            if(element.classList.contains("row") && element.classList.contains("odd") && element.classList.contains("possibleMove")) {
-                    
+            if (element.classList.contains("possibleMove")) {
+
                 // Add piece to new location
                 element.classList.add(this.currentPlayer);
                 // Remove piece from old location
@@ -245,146 +205,192 @@ export default {
                     this.possibleMoves[i].classList.remove("possibleMove");
                 }
 
-                if(this.pieceCaptured === false) {
+                if (this.pieceCaptured === false) {
 
                     // Switch players
                     this.otherPlayer = this.currentPlayer;
                     this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
-                    
                     this.possibleMovesOnBoard = false;
-                } else {    //recreate possible jumps
                     
+                } else {    //recreate possible jumps
+                    let row = element.id.charAt(1);
+                    let column = element.id.charAt(0);
+
+                    if (this.currentPlayer === "white") {
+
+                        // Add possible moves for non-jumping pieces
+                        this.checkWhiteMoves(element);
+                        if (this.possibleMoves) {
+                            // Check if possible moves are valid
+                            this.displayOnlyPossibleJumpMoves();
+                        }
+                    }
+                    if (this.currentPlayer === "red") {
+
+                        // Add possible moves for non-jumping pieces
+                        this.checkRedMoves(element);
+                        if (this.possibleMoves) {
+                            this.displayOnlyPossibleJumpMoves();
+                        }
+                    }
+                    // Set pieceMoving equal to the current piece being targeted to move
+                    this.pieceMoving = element;
+                    // Populate possibleMoves array with elements that contain the class "possibleMove"
+                    this.possibleMoves = document.getElementsByClassName("possibleMove");
+
+                    // Switch players when no more jumps available
+                    if (this.possibleCaptures.size === 0) {    
+                        // Switch players
+                        this.pieceCaptured = false;
+                        this.otherPlayer = this.currentPlayer;
+                        this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
+
+                        this.possibleMovesOnBoard = false;
+
+                    }
                 }
             }
         },
 
         doubleJump(event) {
 
-                // Set pieceCapture to false will allow while loop exit if no jumps available
-                this.pieceCaptured = false;
+            // Set pieceCapture to false will allow while loop exit if no jumps available
+            this.pieceCaptured = false;
 
-                // Establish new starting position
-                let element = event.target;
+            // Establish new starting position
+            let element = event.target;
 
-                // Get row and column of clicked element
-                let row = element.id.charAt(1);
-                let column = element.id.charAt(0);   
+            // Get row and column of clicked element
+            let row = element.id.charAt(1);
+            let column = element.id.charAt(0);
 
-                if(this.currentPlayer === "white") {
+            // Capture Jumped Piece
+            if (this.possibleCaptures.has(element)) {
+                let possibleMove = this.possibleCaptures.get(element);
+                possibleMove.classList.remove(this.otherPlayer);
+                this.possibleCaptures = new Map();
+                this.pieceCaptured = true;
+            }
 
-                    // Add possible moves for non-jumping pieces
-                    this.possibleMoves = [
-                        this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
-                        this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
-                    ];
+            // Add piece to new location
+            element.classList.add(this.currentPlayer);
+            // Remove piece from old location
+            this.pieceMoving.classList.remove(this.currentPlayer);
+            // Increment move counter
+            this.moveCounter++;
 
-                    // Add possible moves for jumping pieces
-                    this.jumpMoves = [
-                        this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
-                        this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
-                    ];
+            // Populate possibleMoves array with elements that contain the class "possibleMove"
+            this.possibleMoves = document.getElementsByClassName("possibleMove");
+            // Reset possible moves
+            if (this.possibleMoves) {
 
-                    if(this.possibleMoves) {
-                    // Check if possible moves are valid
-                    let possibleMove = document.getElementById(this.possibleMoves[0]);
-                    let jumpMove = document.getElementById(this.jumpMoves[0]);
-                   
-                        // Add possible moves for jumping pieces                     
-                        if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){ 
-                            jumpMove.classList.add("possibleMove");
-                            // Add possible captures to map
-                            this.possibleCaptures.set(jumpMove, possibleMove);
-                        }
-                        
-                        possibleMove = document.getElementById(this.possibleMoves[1]);
-                        jumpMove = document.getElementById(this.jumpMoves[1]);
-                        
-                        // Add possible moves for jumping pieces
-                        if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
-                            jumpMove.classList.add("possibleMove");
-                            // Add possible captures to map
-                            this.possibleCaptures.set(jumpMove, possibleMove);
-                        }
-                        // Set pieceMoving equal to the current piece being targeted to move
-                        this.pieceMoving = element;
-                        // Populate possibleMoves array with elements that contain the class "possibleMove"
-                        this.possibleMoves = document.getElementsByClassName("possibleMove");
-                            
-                        // Capture Jumped Piece
-                        if(this.possibleCaptures.has(element)) {
-                            let possibleMove = this.possibleCaptures.get(element);
-                            possibleMove.classList.remove(this.otherPlayer);
-                            this.possibleCaptures = new Map();
-                            this.pieceCaptured = true;
-                            alert("Is Piece Captured?");
-                        }
-                    }
-
-                    // Switch players when no more jumps available
-                    if(this.pieceCaptured === false) {
-
-                        alert("Access Check");
-                        // Switch players
-                        this.otherPlayer = this.currentPlayer;
-                        this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
-
-                        this.possibleMovesOnBoard = false;
-                    }
+                for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
+                    this.possibleMoves[i].classList.remove("possibleMove");
+                }
+            }
+            if (this.possibleCaptures.size > 0) {
+                // Add possible moves for non-jumping pieces
+                if (this.currentPlayer === "white") {
+                    this.checkWhiteMoves(element);
+                } else if (this.currentPlayer === "red") {
+                    this.checkRedMoves(element);
                 }
 
-                else if(this.currentPlayer === "red") {
-                    // Add possible moves for non-jumping pieces
-                    this.possibleMoves = [
-                        this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
-                        this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
-                    ];
-
-                    // Add possible moves for jumping pieces
-                    this.jumpMoves = [
-                        this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
-                        this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
-                    ];
-
-                    if(this.possibleMoves) {
+                if (this.possibleMoves) {
                     // Check if possible moves are valid
-                    let possibleMove = document.getElementById(this.possibleMoves[0]);
-                    let jumpMove = document.getElementById(this.jumpMoves[0]);
-                   
-                    // Add possible moves for jumping pieces
-                     
-                        if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){ 
-                            jumpMove.classList.add("possibleMove");
-                            // Add possible captures to map
-                            this.possibleCaptures.set(jumpMove, possibleMove);
-                        }
-                        
-                        possibleMove = document.getElementById(this.possibleMoves[1]);
-                        jumpMove = document.getElementById(this.jumpMoves[1]);
-                        
-                        // Add possible moves for jumping pieces
-                        if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")){
-                            jumpMove.classList.add("possibleMove");
-                            // Add possible captures to map
-                            this.possibleCaptures.set(jumpMove, possibleMove);
-                        }
-                        // Set pieceMoving equal to the current piece being targeted to move
-                        this.pieceMoving = element;
-                        // Populate possibleMoves array with elements that contain the class "possibleMove"
-                        this.possibleMoves = document.getElementsByClassName("possibleMove");
-                            
-                    // Capture Jumped Piece
-                    if(this.possibleCaptures.has(element)) {
-                        let possibleMove = this.possibleCaptures.get(element);
-                        possibleMove.classList.remove(this.otherPlayer);
-                        this.possibleCaptures = new Map();
-                        this.pieceCaptured = true;
-                    }
-                    }
+                    this.displayOnlyPossibleJumpMoves();
+                }
+            } else {
+                // Switch players when no more jumps available
+                if (this.possibleCaptures.size === 0) {
+                    // Switch players
+                    this.pieceCaptured = false;
+                    this.otherPlayer = this.currentPlayer;
+                    this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
+
+                    this.possibleMovesOnBoard = false;
                 }
 
-                
+            }
+        },
+        checkRedMoves(element) {
+            // Check if red has any possible moves
+            let row = element.id.charAt(1);
+            let column = element.id.charAt(0);
 
-        }
+            // Add possible moves for non-jumping pieces
+            this.possibleMoves = [
+                this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
+                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
+            ];
+            // Add possible moves for jumping pieces
+            this.jumpMoves = [
+                this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
+                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
+            ];
+
+        },
+        checkWhiteMoves(element) {
+            let row = element.id.charAt(1);
+            let column = element.id.charAt(0);
+
+            // Add possible moves for non-jumping pieces
+            this.possibleMoves = [
+                this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
+                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
+            ];
+            // Add possible moves for jumping pieces
+            this.jumpMoves = [
+                this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
+                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
+            ];
+        },
+        displayAllPossibleMoves() {
+            let possibleMove = document.getElementById(this.possibleMoves[0]);
+            let jumpMove = document.getElementById(this.jumpMoves[0]);
+            if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
+                possibleMove.classList.add("possibleMove");
+                // Add possible moves for jumping pieces
+            } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+            possibleMove = document.getElementById(this.possibleMoves[1]);
+            jumpMove = document.getElementById(this.jumpMoves[1]);
+            if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
+                possibleMove.classList.add("possibleMove");
+                // Add possible moves for jumping pieces
+            } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+        },
+        displayOnlyPossibleJumpMoves() {
+            // Check if possible moves are valid
+            let possibleMove = document.getElementById(this.possibleMoves[0]);
+            let jumpMove = document.getElementById(this.jumpMoves[0]);
+
+            // Add possible moves for jumping pieces                     
+            if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+
+            possibleMove = document.getElementById(this.possibleMoves[1]);
+            jumpMove = document.getElementById(this.jumpMoves[1]);
+
+            // Add possible moves for jumping pieces
+            if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+            // Populate possibleMoves array with elements that contain the class "possibleMove"
+            this.possibleMoves = document.getElementsByClassName("possibleMove");
+        },
     }
 }
 
