@@ -116,15 +116,14 @@ export default {
     },
     methods: {
         handleClick() {
-            if(this.possibleMovesOnBoard === false) { //possibleMovesOnBoard
+            if(this.pieceCaptured){
+                this.checkPossibleMoves(event);
+                this.doubleJump(event);
+            }
+            else if(this.possibleMovesOnBoard === false) { //possibleMovesOnBoard
                 this.checkPossibleMoves(event);
             } else {
                 this.movePiece(event);
-                
-                while(this.pieceCaptured){
-                    this.doubleJump(event);
-                }
-
             }
         },
 
@@ -206,6 +205,7 @@ export default {
             // if not, game is over
             // if game is over, display winner
         },
+
         movePiece(event) {
             // if (this.gameOver) {
             //     return;
@@ -216,8 +216,8 @@ export default {
             // Reset possible moves if piece is clicked again
             if(element === this.pieceMoving) {
                 for (let i = this.possibleMoves.length - 1; i >= 0; i--) {
-                        this.possibleMoves[i].classList.remove("possibleMove");
-                    }
+                    this.possibleMoves[i].classList.remove("possibleMove");
+                }
                 this.possibleMovesOnBoard = false;
                 return;
             }
@@ -252,9 +252,12 @@ export default {
                     this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
                     
                     this.possibleMovesOnBoard = false;
+                } else {    //recreate possible jumps
+                    
                 }
             }
         },
+
         doubleJump(event) {
 
                 // Set pieceCapture to false will allow while loop exit if no jumps available
