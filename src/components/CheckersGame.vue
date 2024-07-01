@@ -211,7 +211,7 @@ export default {
                     this.otherPlayer = this.currentPlayer;
                     this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
                     this.possibleMovesOnBoard = false;
-                    
+
                 } else {    //recreate possible jumps
                     let row = element.id.charAt(1);
                     let column = element.id.charAt(0);
@@ -239,7 +239,7 @@ export default {
                     this.possibleMoves = document.getElementsByClassName("possibleMove");
 
                     // Switch players when no more jumps available
-                    if (this.possibleCaptures.size === 0) {    
+                    if (this.possibleCaptures.size === 0) {
                         // Switch players
                         this.pieceCaptured = false;
                         this.otherPlayer = this.currentPlayer;
@@ -276,11 +276,15 @@ export default {
             element.classList.add(this.currentPlayer);
             // Remove piece from old location
             this.pieceMoving.classList.remove(this.currentPlayer);
+            // Reassign pieceMoving to the new location
+            this.pieceMoving = element;
             // Increment move counter
             this.moveCounter++;
 
+
             // Populate possibleMoves array with elements that contain the class "possibleMove"
             this.possibleMoves = document.getElementsByClassName("possibleMove");
+
             // Reset possible moves
             if (this.possibleMoves) {
 
@@ -288,7 +292,9 @@ export default {
                     this.possibleMoves[i].classList.remove("possibleMove");
                 }
             }
-            if (this.possibleCaptures.size > 0) {
+
+
+            if (this.pieceCaptured) {
                 // Add possible moves for non-jumping pieces
                 if (this.currentPlayer === "white") {
                     this.checkWhiteMoves(element);
@@ -300,16 +306,17 @@ export default {
                     // Check if possible moves are valid
                     this.displayOnlyPossibleJumpMoves();
                 }
-            } else {
-                // Switch players when no more jumps available
-                if (this.possibleCaptures.size === 0) {
-                    // Switch players
-                    this.pieceCaptured = false;
-                    this.otherPlayer = this.currentPlayer;
-                    this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
+            }
+            // Switch players when no more jumps available
+            if (this.pieceCaptured === false || this.possibleCaptures.size === 0) {
 
-                    this.possibleMovesOnBoard = false;
-                }
+                // Switch players
+                this.pieceCaptured = false;
+                this.otherPlayer = this.currentPlayer;
+                this.currentPlayer = this.currentPlayer === "red" ? "white" : "red"; // switch players
+
+                this.possibleMovesOnBoard = false;
+
 
             }
         },
