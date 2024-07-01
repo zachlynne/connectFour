@@ -102,6 +102,8 @@ export default {
             winner: "",
             elementId: null,
             moveCounter: 0,
+            numberOfRedPieces: 12,
+            numberOfWhitePieces: 12,
             possibleMovesOnBoard: false,
             possibleMoves: null,
             jumpMoves: null,
@@ -186,8 +188,23 @@ export default {
             if (this.possibleCaptures.has(element)) {
                 let possibleMove = this.possibleCaptures.get(element);
                 possibleMove.classList.remove(this.otherPlayer);
+                possibleMove.classList.remove("king");
                 this.possibleCaptures = new Map();
                 this.pieceCaptured = true;
+
+                if (this.otherPlayer === "red"){
+                    this.numberOfRedPieces--;
+                    if (this.numberOfRedPieces === 0) {
+                        this.gameOver = true;
+                        alert("White Wins");
+                    }
+                } else if (this.otherPlayer === "white"){
+                    this.numberOfWhitePieces--;
+                    if (this.numberOfWhitePieces === 0) {
+                        this.gameOver = true;
+                        alert("Red Wins");
+                    }
+                }
             }
 
             // Move Piece
@@ -197,6 +214,26 @@ export default {
                 element.classList.add(this.currentPlayer);
                 // Remove piece from old location
                 this.pieceMoving.classList.remove(this.currentPlayer);
+
+
+                // Check if King and add className
+                if (this.pieceMoving.classList.contains("king")) {
+                    element.classList.add("king");
+                    // Remove king from old location
+                    this.pieceMoving.classList.remove("king");
+                }
+
+
+                // Adds king className if a red piece lands in the bottom row
+                if (this.currentPlayer === "red" && element.id.charAt(1) === "8") {
+                    element.classList.add("king");
+                    // Adds king className if a white piece lands in the top row    
+                } else if (this.currentPlayer === "white" && element.id.charAt(1) === "1") {
+                    element.classList.add("king");
+                }
+
+
+
                 // Increment move counter
                 this.moveCounter++;
 
@@ -268,14 +305,50 @@ export default {
             if (this.possibleCaptures.has(element)) {
                 let possibleMove = this.possibleCaptures.get(element);
                 possibleMove.classList.remove(this.otherPlayer);
+                possibleMove.classList.remove("king");
                 this.possibleCaptures = new Map();
                 this.pieceCaptured = true;
+
+                if (this.otherPlayer === "red"){
+                    this.numberOfRedPieces--;
+                    if (this.numberOfRedPieces === 0) {
+                        this.gameOver = true;
+                        alert("White Wins");
+                    }
+                } else if (this.otherPlayer === "white"){
+                    this.numberOfWhitePieces--;
+                    if (this.numberOfWhitePieces === 0) {
+                        this.gameOver = true;
+                        alert("Red Wins");
+                    }
+                }
+
+                
             }
 
             // Add piece to new location
             element.classList.add(this.currentPlayer);
             // Remove piece from old location
             this.pieceMoving.classList.remove(this.currentPlayer);
+
+
+            // Check if King and add className
+            if (this.pieceMoving.classList.contains("king")) {
+                element.classList.add("king");
+                // Remove king from old location
+                this.pieceMoving.classList.remove("king");
+            }
+
+
+            // Adds king className if a red piece lands in the bottom row
+            if (this.currentPlayer === "red" && element.id.charAt(1) === "8") {
+                element.classList.add("king");
+                // Adds king className if a white piece lands in the top row    
+            } else if (this.currentPlayer === "white" && element.id.charAt(1) === "1") {
+                element.classList.add("king");
+            }
+
+
             // Reassign pieceMoving to the new location
             this.pieceMoving = element;
             // Increment move counter
@@ -320,36 +393,72 @@ export default {
 
             }
         },
-        checkRedMoves(element) {
-            // Check if red has any possible moves
-            let row = element.id.charAt(1);
-            let column = element.id.charAt(0);
-
-            // Add possible moves for non-jumping pieces
-            this.possibleMoves = [
-                this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
-                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
-            ];
-            // Add possible moves for jumping pieces
-            this.jumpMoves = [
-                this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
-                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
-            ];
+        checkForKing(element) {
 
         },
+        checkForWinCondition() {
+            let remaining
+        },
+        checkRedMoves(element) {
+            // Check for King Moves if element contains kinged piece
+            if (element.classList.contains("king")) {
+                this.checkKingMoves(element);
+            } // Check if red has any possible moves
+            else {
+                // Check if red has any possible moves
+                let row = element.id.charAt(1);
+                let column = element.id.charAt(0);
+
+                // Add possible moves for non-jumping pieces
+                this.possibleMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
+                ];
+                // Add possible moves for jumping pieces
+                this.jumpMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
+                ];
+            }
+        },
         checkWhiteMoves(element) {
+            // Check for King Moves if element contains kinged piece
+            if (element.classList.contains("king")) {
+                this.checkKingMoves(element);
+            } // Check if white has any possible moves
+            else {
+                let row = element.id.charAt(1);
+                let column = element.id.charAt(0);
+
+                // Add possible moves for non-jumping pieces
+                this.possibleMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
+                ];
+                // Add possible moves for jumping pieces
+                this.jumpMoves = [
+                    this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
+                    this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
+                ];
+            }
+        },
+        checkKingMoves(element) {
             let row = element.id.charAt(1);
             let column = element.id.charAt(0);
 
             // Add possible moves for non-jumping pieces
             this.possibleMoves = [
                 this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) - 1),
-                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1)
+                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) - 1),
+                this.columnPosition[this.columnPosition.indexOf(column) - 1] + (parseInt(row) + 1),
+                this.columnPosition[this.columnPosition.indexOf(column) + 1] + (parseInt(row) + 1)
             ];
             // Add possible moves for jumping pieces
             this.jumpMoves = [
                 this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) - 2),
-                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2)
+                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) - 2),
+                this.columnPosition[this.columnPosition.indexOf(column) - 2] + (parseInt(row) + 2),
+                this.columnPosition[this.columnPosition.indexOf(column) + 2] + (parseInt(row) + 2)
             ];
         },
         displayAllPossibleMoves() {
@@ -365,6 +474,26 @@ export default {
             }
             possibleMove = document.getElementById(this.possibleMoves[1]);
             jumpMove = document.getElementById(this.jumpMoves[1]);
+            if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
+                possibleMove.classList.add("possibleMove");
+                // Add possible moves for jumping pieces
+            } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+            possibleMove = document.getElementById(this.possibleMoves[2]);
+            jumpMove = document.getElementById(this.jumpMoves[2]);
+            if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
+                possibleMove.classList.add("possibleMove");
+                // Add possible moves for jumping pieces
+            } else if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+            possibleMove = document.getElementById(this.possibleMoves[3]);
+            jumpMove = document.getElementById(this.jumpMoves[3]);
             if (possibleMove && !possibleMove.classList.contains("red") && !possibleMove.classList.contains("white")) {
                 possibleMove.classList.add("possibleMove");
                 // Add possible moves for jumping pieces
@@ -395,6 +524,25 @@ export default {
                 // Add possible captures to map
                 this.possibleCaptures.set(jumpMove, possibleMove);
             }
+            possibleMove = document.getElementById(this.possibleMoves[2]);
+            jumpMove = document.getElementById(this.jumpMoves[2]);
+
+            // Add possible moves for jumping pieces
+            if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+            possibleMove = document.getElementById(this.possibleMoves[3]);
+            jumpMove = document.getElementById(this.jumpMoves[3]);
+
+            // Add possible moves for jumping pieces
+            if (possibleMove && possibleMove.classList.contains(this.otherPlayer) && jumpMove && !jumpMove.classList.contains("red") && !jumpMove.classList.contains("white")) {
+                jumpMove.classList.add("possibleMove");
+                // Add possible captures to map
+                this.possibleCaptures.set(jumpMove, possibleMove);
+            }
+
             // Populate possibleMoves array with elements that contain the class "possibleMove"
             this.possibleMoves = document.getElementsByClassName("possibleMove");
         },
@@ -463,6 +611,14 @@ export default {
     background-color: white;
     border-radius: 50%;
     scale: 85%;
+
+}
+
+.king {
+    background-image: url("src/assets/checkerKing.png");
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .possibleMove {
